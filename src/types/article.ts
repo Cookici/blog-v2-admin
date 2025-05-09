@@ -4,6 +4,9 @@ import type { UserInfo } from './user'
 export interface LabelDTO {
   labelId: string
   labelName: string
+  labelAlias?: string
+  labelDescription?: string
+  isDeleted: number
 }
 
 // 文章信息
@@ -26,8 +29,8 @@ export interface ArticleDTO {
 export interface ArticlePageQuery {
   page: number
   pageSize: number
-  articleTitle: string
-  articleContent: string
+  articleTitle?: string
+  articleContent?: string
   status?: string
   isDeleted?: number
 }

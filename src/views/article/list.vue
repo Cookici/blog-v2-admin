@@ -82,7 +82,7 @@
                             <div class="action-group">
                                 <!-- 审核操作 -->
                                 <template v-if="scope.row.status === 'under_audit' && scope.row.isDeleted === 0">
-                                    <el-dropdown @command="(command) => handleStatusChange(scope.row, command)">
+                                    <el-dropdown @command="(command: string) => handleStatusChange(scope.row, command)">
                                         <el-button type="warning" size="small">
                                             审核操作<el-icon><arrow-down /></el-icon>
                                         </el-button>
