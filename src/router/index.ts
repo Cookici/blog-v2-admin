@@ -14,13 +14,22 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     component: Layout,
+    children: [],
     redirect: '/dashboard',
+    meta: { hidden: true }
+  },
+  {
+    path: '/dashboard',
+    component: Layout,
+    name: 'Dashboard',
+    redirect: '',
+    meta: { title: '仪表盘', icon: 'HomeFilled' },
     children: [
       {
-        path: 'dashboard',
-        name: 'Dashboard',
+        path: '',
+        name: 'DashboardIndex',
         component: () => import('@/views/dashboard/index.vue'),
-        meta: { title: '仪表盘', icon: 'HomeFilled' }
+        meta: { title: '仪表盘', hideChildrenInMenu: true }
       }
     ]
   },

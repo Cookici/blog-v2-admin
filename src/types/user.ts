@@ -21,7 +21,7 @@ export interface UserInfo {
     keyword: string
     pageNum: number
     pageSize: number
-    status: number
+    status?: number
   }
   
   // API 相关接口

@@ -4,6 +4,7 @@
     <div class="sidebar-container" :class="{ 'is-collapsed': isCollapse }">
       <div class="logo-container">
         <h1 class="logo-title" v-show="!isCollapse">博客管理系统</h1>
+        <h1 class="logo-title-collapsed" v-show="isCollapse">博</h1>
       </div>
       
       <!-- 菜单 -->
@@ -15,6 +16,7 @@
           background-color="#304156"
           text-color="#bfcbd9"
           active-text-color="#409EFF"
+          :collapse-transition="false"
           router
         >
           <sidebar-item 
@@ -22,6 +24,7 @@
             :key="route.path" 
             :item="route" 
             :base-path="route.path"
+            :is-collapse="isCollapse"
           />
         </el-menu>
       </el-scrollbar>
@@ -144,28 +147,9 @@ const handleCommand = async (command: string) => {
     } catch {
       // 用户取消操作
     }
-  } else if (command === 'profile') {
-    // 跳转到个人信息页
-    // router.push('/profile'); // 假设有个人信息页路由
   }
 };
 
-// 移除以下路由监听逻辑，因为 :key="currentRoute.fullPath" 已经解决了刷新问题
-/*
-watch(
-  () => route.fullPath,
-  (newPath, oldPath) => {
-    // 如果是同一个路由的不同参数，也触发刷新
-    if (newPath !== oldPath) {
-      // 触发一个自定义事件，通知需要刷新的组件
-      const refreshEvent = new CustomEvent('route-changed', {
-        detail: { path: newPath }
-      });
-      window.dispatchEvent(refreshEvent);
-    }
-  }
-);
-*/
 </script>
 
 <style scoped>
@@ -176,31 +160,79 @@ watch(
   overflow: hidden;
 }
 
+.logo-title-collapsed {
+  color: #fff;
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0;
+  text-align: center;
+}
+
 .sidebar-container {
   width: 210px;
   height: 100%;
   background-color: #304156;
   transition: width 0.28s;
   overflow: hidden;
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 1001;
 }
 
 .sidebar-container.is-collapsed {
   width: 64px;
+  .el-menu--collapse {
+    width: 64px;
+  }
+  .logo-container {
+    padding: 0;
+  }
 }
 
+/* 添加悬停提示样式 */
+:deep(.el-menu--popup) {
+  min-width: 160px;
+  padding: 5px 0;
+  border-radius: 4px;
+  border: none;
+  box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
+}
+
+:deep(.el-menu-item),
+:deep(.el-sub-menu__title) {
+  &:hover {
+    background-color: #263445 !important;
+  }
+}
+
+:deep(.el-menu--collapse) .el-sub-menu__title {
+  padding: 0 16px !important;
+}
+
+/* 优化图标样式 */
+:deep(.el-menu-item) .el-icon,
+:deep(.el-sub-menu__title) .el-icon {
+  margin-right: 12px;
+  font-size: 18px;
+  vertical-align: middle;
+}
+
+.sidebar-container.is-collapsed {
+  :deep(.el-menu-item) .el-icon,
+  :deep(.el-sub-menu__title) .el-icon {
+    margin: 0;
+    font-size: 20px;
+  }
+}
 .logo-container {
-  height: 60px;
-  padding: 10px;
+  height: 50px; /* 减小高度 */
+  padding: 0 10px; /* 减小内边距 */
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: #2b3649;
-}
-
-.logo-img {
-  width: 32px;
-  height: 32px;
-  margin-right: 10px;
 }
 
 .logo-title {
@@ -217,16 +249,25 @@ watch(
   flex-direction: column;
   overflow: hidden;
   background-color: #f0f2f5;
+  margin-left: 210px; /* 添加左边距，与侧边栏宽度相同 */
+  transition: margin-left 0.28s;
+}
+
+/* 侧边栏折叠时调整主容器边距 */
+.sidebar-container.is-collapsed + .main-container {
+  margin-left: 64px;
 }
 
 .navbar {
-  height: 60px;
+  height: 50px; /* 减小导航栏高度 */
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 20px;
+  padding: 0 15px; /* 减小内边距 */
   background-color: #fff;
   box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+  position: relative;
+  z-index: 1000;
 }
 
 .left-area {
@@ -235,9 +276,13 @@ watch(
 }
 
 .fold-btn {
-  font-size: 20px;
+  font-size: 18px; /* 稍微减小图标大小 */
   cursor: pointer;
-  margin-right: 20px;
+  margin-right: 15px; /* 减小右边距 */
+  padding: 0 8px;
+  height: 100%;
+  display: flex;
+  align-items: center;
 }
 
 .right-area {
@@ -249,17 +294,19 @@ watch(
   display: flex;
   align-items: center;
   cursor: pointer;
+  padding: 0 8px;
 }
 
 .username {
-  margin: 0 8px;
+  margin: 0 6px;
   color: #606266;
 }
 
 .app-main {
   flex: 1;
-  padding: 20px;
+  padding: 15px; /* 减小内边距 */
   overflow-y: auto;
+  position: relative;
 }
 
 /* 过渡动画 */

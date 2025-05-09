@@ -33,3 +33,9 @@ export interface CommentDeleteCommand {
 }
 
 
+export interface CommentDailyCountDTO {
+  date: string
+  count: number
+}
+
+

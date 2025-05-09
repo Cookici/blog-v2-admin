@@ -90,38 +90,6 @@
         />
       </div>
     </el-card>
-    
-    <!-- 禁用用户对话框保持不变 -->
-    <el-dialog
-      v-model="banDialogVisible"
-      title="禁用用户"
-      width="500px"
-    >
-      <el-form :model="banForm" label-width="100px">
-        <el-form-item label="用户ID">
-          <el-input v-model="banForm.userId" disabled />
-        </el-form-item>
-        <el-form-item label="用户名">
-          <el-input v-model="selectedUser.userName" disabled />
-        </el-form-item>
-        <el-form-item label="禁用原因">
-          <el-input 
-            v-model="banForm.reason" 
-            type="textarea" 
-            :rows="4" 
-            placeholder="请输入禁用原因"
-          />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <span class="dialog-footer">
-          <el-button @click="banDialogVisible = false">取消</el-button>
-          <el-button type="primary" @click="confirmBan" :loading="banLoading">
-            确认禁用
-          </el-button>
-        </span>
-      </template>
-    </el-dialog>
   </div>
 </template>
 
@@ -131,7 +99,7 @@ import { useRouter } from 'vue-router';
 import { Search } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { useUserApi } from '@/services/modules/user';
-import type { UserInfo, UserOperatorReq } from '@/types/user';
+import type { UserAdminSearchReq, UserInfo, UserOperatorReq } from '@/types/user';
 
 const router = useRouter();
 

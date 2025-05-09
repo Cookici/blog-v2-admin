@@ -8,6 +8,10 @@ export interface LabelDTO {
   labelDescription?: string
   isDeleted: number
 }
+export interface ArticleDailyCountDTO {
+  date: string
+  count: number
+}
 
 // 文章信息
 export interface ArticleDTO {
