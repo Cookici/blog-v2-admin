@@ -7,6 +7,23 @@
         </div>
       </template>
       
+      <!-- 搜索区域 -->
+      <div class="search-container">
+        <el-input
+          v-model="searchKeyword"
+          placeholder="搜索评论内容"
+          class="search-input"
+          clearable
+          @keyup.enter="handleSearch"
+        >
+          <template #prefix>
+            <el-icon><Search /></el-icon>
+          </template>
+        </el-input>
+        <el-button type="primary" @click="handleSearch">搜索</el-button>
+        <el-button @click="resetSearch">重置</el-button>
+      </div>
+      
       <el-table :data="commentList" v-loading="loading">
         <el-table-column prop="commentContent" label="评论内容" width="300" />
         <el-table-column prop="userInfo.userName" label="评论人" width="120" />
@@ -63,6 +80,7 @@ import { useRouter } from 'vue-router';
 import { useCommentApi } from '@/services/modules/comment';
 import type { CommentDTO, CommentPageQuery, CommentDeleteCommand } from '@/types/comment';
 import { ElMessage, ElMessageBox } from 'element-plus';
+import { Search } from '@element-plus/icons-vue';
 
 const router = useRouter();
 const commentList = ref<CommentDTO[]>([]);
@@ -70,13 +88,15 @@ const loading = ref(false);
 const total = ref(0);
 const currentPage = ref(1);
 const pageSize = ref(10);
+const searchKeyword = ref('');
 
 const fetchCommentList = async () => {
   try {
     loading.value = true;
     const params: CommentPageQuery = {
       page: currentPage.value,
-      pageSize: pageSize.value
+      pageSize: pageSize.value,
+      keyword: searchKeyword.value
     };
     const response = await useCommentApi.page(params);
     commentList.value = response.data;
@@ -91,6 +111,17 @@ const fetchCommentList = async () => {
 
 const handleSizeChange = (newSize: number) => {
   pageSize.value = newSize;
+  fetchCommentList();
+};
+
+const handleSearch = () => {
+  currentPage.value = 1;
+  fetchCommentList();
+};
+
+const resetSearch = () => {
+  searchKeyword.value = '';
+  currentPage.value = 1;
   fetchCommentList();
 };
 
@@ -149,6 +180,16 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.search-container {
+  margin-bottom: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.search-input {
+  width: 300px;
 }
 
 .pagination-container {

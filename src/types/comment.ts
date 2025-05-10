@@ -19,17 +19,20 @@ export interface CommentDTO {
 export interface CommentPageQuery {
   page: number
   pageSize: number
+  keyword: string
 }
 
 export interface CommentChildPageQuery {
   commentId: string
   page: number
   pageSize: number
+  keyword: string
 }
 
 export interface CommentDeleteCommand {
   commentId: string
   parentCommentId: string
+  keyword?: string
 }
 
 

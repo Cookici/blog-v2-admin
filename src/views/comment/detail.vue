@@ -30,6 +30,24 @@
       <!-- 子评论列表 -->
       <template v-if="!mainComment.parentCommentId || mainComment.parentCommentId === '0'">
         <el-divider content-position="left">子评论列表</el-divider>
+        
+        <!-- 子评论搜索 -->
+        <div class="search-container">
+          <el-input
+            v-model="childSearchKeyword"
+            placeholder="搜索子评论内容"
+            class="search-input"
+            clearable
+            @keyup.enter="handleChildSearch"
+          >
+            <template #prefix>
+              <el-icon><Search /></el-icon>
+            </template>
+          </el-input>
+          <el-button type="primary" @click="handleChildSearch">搜索</el-button>
+          <el-button @click="resetChildSearch">重置</el-button>
+        </div>
+        
         <div class="child-comments" v-loading="childrenLoading">
           <div v-if="childComments.length === 0" class="no-comments">
             <el-empty description="暂无子评论" />
@@ -77,6 +95,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { useCommentApi } from '@/services/modules/comment';
 import type { CommentDTO, CommentChildPageQuery, CommentDeleteCommand } from '@/types/comment';
 import { ElMessage, ElMessageBox } from 'element-plus';
+import { Search } from '@element-plus/icons-vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -89,6 +108,7 @@ const childrenLoading = ref(false);
 const childTotal = ref(0);
 const childCurrentPage = ref(1);
 const childPageSize = ref(10);
+const childSearchKeyword = ref('');
 
 // 格式化时间
 const formatTime = (time?: string) => {
@@ -125,17 +145,33 @@ const fetchChildComments = async () => {
     const params: CommentChildPageQuery = {
       commentId: mainComment.value.commentId,
       page: childCurrentPage.value,
-      pageSize: childPageSize.value
+      pageSize: childPageSize.value,
+      keyword: childSearchKeyword.value
     };
     
     const response = await useCommentApi.pageChild(params);
-    childComments.value = response.data;
-    childTotal.value = response.total;
+    childComments.value = response.data || [];
+    childTotal.value = response.total || 0;
   } catch (error) {
     ElMessage.error('获取子评论失败');
+    childComments.value = [];
+    childTotal.value = 0;
   } finally {
     childrenLoading.value = false;
   }
+};
+
+// 子评论搜索
+const handleChildSearch = () => {
+  childCurrentPage.value = 1;
+  fetchChildComments();
+};
+
+// 重置子评论搜索
+const resetChildSearch = () => {
+  childSearchKeyword.value = '';
+  childCurrentPage.value = 1;
+  fetchChildComments();
 };
 
 // 子评论分页大小变化
@@ -227,6 +263,14 @@ onMounted(() => {
   margin-top: 20px;
   display: flex;
   justify-content: flex-end;
+}
+.search-container {
+  margin-bottom: 20px;
+  display: flex;
+  gap: 10px;
+}
+.search-input {
+  width: 300px;
 }
 .comment-detail-container {
   padding: 20px;
